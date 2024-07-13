@@ -28,7 +28,7 @@ var tileCmd = &cobra.Command{
 		cmd.Flags().IntVarP(&tileSize, "size", "s", 256, "Specify tile's size")
 
 		imgfile, err := os.Open(inputPath)
-		defer imgfile.Close() //nolint:all
+		defer imgfile.Close() //nolint:all // ...
 		if err != nil {
 			fmt.Println("file not found!")
 			os.Exit(1)
@@ -43,7 +43,7 @@ var tileCmd = &cobra.Command{
 		fmt.Println(defaultOutput)
 
 		if stat, err := os.Stat(defaultOutput); err != nil && stat == nil {
-			//nolint:gosec
+			//nolint:gosec // ...
 			if err := os.Mkdir(defaultOutput, 0777); err != nil {
 				fmt.Println("cannot create output dir!")
 				os.Exit(1)
@@ -67,7 +67,7 @@ var tileCmd = &cobra.Command{
 	},
 }
 
-//nolint:all
+//nolint:all // ...
 func init() {
 	rootCmd.AddCommand(tileCmd)
 }
