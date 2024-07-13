@@ -24,7 +24,7 @@ var tileCmd = &cobra.Command{
 	Use:   "tile",
 	Short: "Tile any image to tiles",
 	Long:  `Tile any image to tiles. Use .jpg or .png.`,
-	Run: func(cmd *cobra.Command, _ []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		imgfile, err := os.Open(inputPath)
 		defer imgfile.Close() //nolint:all // ...
 		if err != nil {

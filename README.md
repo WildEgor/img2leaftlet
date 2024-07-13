@@ -8,3 +8,10 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/WildEgor/img2leaftlet/build.yml?branch=main)](https://github.com/WildEgor/img2leaftlet/actions?query=workflow%3Abuild+branch%3Amain)
 [![Go Report Card](https://goreportcard.com/badge/github.com/WildEgor/img2leaftlet)](https://goreportcard.com/report/github.com/WildEgor/img2leaftlet)
 [![Codecov](https://codecov.io/gh/WildEgor/img2leaftlet/branch/main/graph/badge.svg)](https://codecov.io/gh/WildEgor/img2leaftlet)
+
+### Usage
+
+Create tiles from image.jpg and save to output folder suitable for Leaftlet usage
+```shell
+img2leaftlet tile --input image.jpg --output output --size 128
+```
