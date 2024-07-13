@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"fmt"
 	"github.com/nao1215/imaging"
 	"image"
 	"image/draw"
 	"image/png"
+	"log/slog"
 	"math"
 	"os"
 	"strconv"
@@ -42,7 +42,7 @@ func (h *TileHandler) Handle(args *Args) error {
 	rescaleSize := args.Size
 
 	for scale := scaleMax; scale >= 1; scale-- {
-		fmt.Printf("tile size: %v\n", cTileSize)
+		slog.Debug("tile size: ", slog.Any("value", cTileSize))
 		h.makeImageTiles(args.Output, scale, cTileSize, rescaleSize, rgbimage)
 		cTileSize *= 2
 	}
@@ -52,8 +52,8 @@ func (h *TileHandler) Handle(args *Args) error {
 
 // makeImageTiles ...
 func (h *TileHandler) makeImageTiles(basePath string, scale int, tileSize int, rescaleSize int, rgbimage *image.NRGBA) {
-	fmt.Println(scale, tileSize)
-
+	slog.Debug("scale and tile size:", slog.Group("values", slog.Any("scale", scale), slog.Any("tileSize", tileSize)))
+	
 	bounds := rgbimage.Bounds()
 
 	subPath := basePath + "/" + strconv.Itoa(scale)
@@ -146,13 +146,13 @@ func processTile(job *tileJob) {
 
 	subfile, err := os.Create(job.subPath + "/" + strconv.Itoa(job.cx/job.tileSize) + "/" + strconv.Itoa(job.cy/job.tileSize) + ".png")
 	if err != nil {
-		fmt.Println("Failed to create tile file:", err)
+		slog.Error("failed to create tile file: ", slog.Any("err", err))
 		return
 	}
 	defer subfile.Close() //nolint:all // ...
 
 	if err := png.Encode(subfile, subimage); err != nil {
-		fmt.Println("Failed to encode tile image:", err)
+		slog.Error("failed to encode tile image: ", slog.Any("err", err))
 		return
 	}
 }

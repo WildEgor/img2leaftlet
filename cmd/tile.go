@@ -1,12 +1,10 @@
-//go:build ignore
-
 package cmd
 
 import (
-	"fmt"
 	"github.com/WildEgor/img2leaftlet/internal/handlers"
 	"github.com/spf13/cobra"
 	"image"
+	"log/slog"
 	"os"
 	"path"
 	"path/filepath"
@@ -15,24 +13,22 @@ import (
 // handler default tile handler
 var handler = handlers.NewTileHandler()
 
+var (
+	inputPath  = "image.jpg"
+	outputPath = "tiles"
+	tileSize   = 256
+)
+
 // tileCmd represents tile cmd
 var tileCmd = &cobra.Command{
 	Use:   "tile",
 	Short: "Tile any image to tiles",
 	Long:  `Tile any image to tiles. Use .jpg or .png.`,
 	Run: func(cmd *cobra.Command, _ []string) {
-		inputPath := "image.jpg"
-		outputPath := "output"
-		tileSize := 256
-
-		cmd.Flags().StringVarP(&inputPath, "input", "in", "image.jpg", "Specify input image path")
-		cmd.Flags().StringVarP(&outputPath, "output", "out", "output", "Specify output dir path")
-		cmd.Flags().IntVarP(&tileSize, "size", "s", 256, "Specify tile's size")
-
 		imgfile, err := os.Open(inputPath)
 		defer imgfile.Close() //nolint:all // ...
 		if err != nil {
-			fmt.Println("file not found!")
+			slog.Error("fail open image file!", slog.Any("err", err))
 			os.Exit(1)
 		}
 
@@ -42,19 +38,19 @@ var tileCmd = &cobra.Command{
 		}
 
 		defaultOutput := filepath.ToSlash(path.Join(getwd, outputPath))
-		fmt.Println(defaultOutput)
+		slog.Debug("output path: ", slog.Any("value", defaultOutput))
 
 		if stat, err := os.Stat(defaultOutput); err != nil && stat == nil {
 			//nolint:gosec // ...
 			if err := os.Mkdir(defaultOutput, 0777); err != nil {
-				fmt.Println("cannot create output dir!")
+				slog.Error("read output dir fail!", slog.Any("err", err))
 				os.Exit(1)
 			}
 		}
 
 		img, _, err := image.Decode(imgfile)
 		if err != nil {
-			fmt.Println("failed to decode image!")
+			slog.Error("failed to decode image!", slog.Any("err", err))
 			os.Exit(1)
 		}
 
@@ -63,13 +59,16 @@ var tileCmd = &cobra.Command{
 			Output: defaultOutput,
 			Size:   tileSize,
 		}); err != nil {
-			fmt.Println(err)
+			slog.Error("fail tile!", slog.Any("err", err))
 			os.Exit(1)
 		}
 	},
 }
 
-//nolint:all // ...
-func init() {
+// InitTileCmd ...
+func InitTileCmd() {
+	tileCmd.Flags().StringVarP(&inputPath, "input", "i", "image.jpg", "Specify input image path")
+	tileCmd.Flags().StringVarP(&outputPath, "output", "o", "output", "Specify output dir path")
+	tileCmd.Flags().IntVarP(&tileSize, "size", "s", 256, "Specify tile's size")
 	rootCmd.AddCommand(tileCmd)
 }

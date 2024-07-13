@@ -2,11 +2,11 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/spf13/cobra"
 	"image"
 	"image/jpeg"
 	"image/png"
+	"log/slog"
 	"os"
 )
 
@@ -17,20 +17,17 @@ var rootCmd = &cobra.Command{
 	Long:  ``,
 }
 
-// Execute handle cmd
+// Execute default image formats and call cobra init
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-}
-
-// init default image formats and call cobra init
-//
-//nolint:all // ...
-func init() {
 	image.RegisterFormat("jpeg", "jpeg", jpeg.Decode, jpeg.DecodeConfig)
 	image.RegisterFormat("png", "png", png.Decode, png.DecodeConfig)
 
 	cobra.OnInitialize()
+
+	InitTileCmd()
+
+	if err := rootCmd.Execute(); err != nil {
+		slog.Error("error execute: ", slog.Any("err", err))
+		os.Exit(1)
+	}
 }
