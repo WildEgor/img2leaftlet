@@ -14,16 +14,19 @@ import (
 
 var _ Handler = (*TileHandler)(nil)
 
+// TileHandler ...
 type TileHandler struct {
 	maxWorkers int
 }
 
+// NewTileHandler ...
 func NewTileHandler() *TileHandler {
 	return &TileHandler{
 		4,
 	}
 }
 
+// Handle ...
 func (h *TileHandler) Handle(args *Args) error {
 	rgbimage := imaging.Clone(args.Image)
 	bounds := rgbimage.Bounds()
@@ -41,18 +44,20 @@ func (h *TileHandler) Handle(args *Args) error {
 	for scale := scaleMax; scale >= 1; scale-- {
 		fmt.Printf("tile size: %v\n", cTileSize)
 		h.makeImageTiles(args.Output, scale, cTileSize, rescaleSize, rgbimage)
-		cTileSize = cTileSize * 2
+		cTileSize *= 2
 	}
 
 	return nil
 }
 
+// makeImageTiles ...
 func (h *TileHandler) makeImageTiles(basePath string, scale int, tileSize int, rescaleSize int, rgbimage *image.NRGBA) {
 	fmt.Println(scale, tileSize)
 
 	bounds := rgbimage.Bounds()
 
 	subPath := basePath + "/" + strconv.Itoa(scale)
+	//nolint:gosec
 	if err := os.MkdirAll(subPath, 0777); err != nil {
 		return
 	}
@@ -71,6 +76,7 @@ func (h *TileHandler) makeImageTiles(basePath string, scale int, tileSize int, r
 	}
 
 	for cx := bounds.Min.X; cx < bounds.Max.X; cx += tileSize {
+		//nolint:gosec
 		if err := os.MkdirAll(subPath+"/"+strconv.Itoa(cx/tileSize), 0777); err != nil {
 			return
 		}
@@ -92,12 +98,14 @@ func (h *TileHandler) makeImageTiles(basePath string, scale int, tileSize int, r
 	wg.Wait()
 }
 
+// tileJob ...
 type tileJob struct {
 	cx, cy, tileSize, rescaleSize int
 	subPath                       string
 	rgbimage                      *image.NRGBA
 }
 
+// processTile ...
 func processTile(job *tileJob) {
 	subimage := job.rgbimage.SubImage(image.Rectangle{
 		Min: image.Point{
@@ -141,7 +149,7 @@ func processTile(job *tileJob) {
 		fmt.Println("Failed to create tile file:", err)
 		return
 	}
-	defer subfile.Close()
+	defer subfile.Close() //nolint:all
 
 	if err := png.Encode(subfile, subimage); err != nil {
 		fmt.Println("Failed to encode tile image:", err)

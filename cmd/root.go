@@ -1,3 +1,4 @@
+// Package cmd ...
 package cmd
 
 import (
@@ -25,6 +26,8 @@ func Execute() {
 }
 
 // init default image formats and call cobra init
+//
+//nolint:all
 func init() {
 	image.RegisterFormat("jpeg", "jpeg", jpeg.Decode, jpeg.DecodeConfig)
 	image.RegisterFormat("png", "png", png.Decode, png.DecodeConfig)
