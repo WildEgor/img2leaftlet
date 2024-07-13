@@ -1,12 +1,12 @@
-// Application which greets you.
+// Package main ...
 package main
 
-import "fmt"
+import (
+	"github.com/WildEgor/img2leaftlet/cmd"
+	"github.com/WildEgor/img2leaftlet/internal/logger"
+)
 
 func main() {
-	fmt.Println(greet())
-}
-
-func greet() string {
-	return "Hi!"
+	logger.Init()
+	cmd.Execute()
 }
