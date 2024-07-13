@@ -1,12 +1,9 @@
-// Application which greets you.
 package main
 
-import "fmt"
+import (
+	"github.com/WildEgor/img2leaftlet/cmd"
+)
 
 func main() {
-	fmt.Println(greet())
-}
-
-func greet() string {
-	return "Hi!"
+	cmd.Execute()
 }
