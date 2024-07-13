@@ -11,7 +11,7 @@ precommit: all vuln
 
 .PHONY: ci
 ci: ## CI build pipeline
-ci: precommit diff
+ci: precommit ## diff
 
 .PHONY: help
 help:
